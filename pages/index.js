@@ -21,16 +21,17 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-// import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   KeyboardDatePicker,
-  // KeyboardDateTimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const useStyles = makeStyles((theme) => ({
   service: {
@@ -57,6 +58,16 @@ const createData = (
 const Index = () => {
   const classes = useStyles();
 
+  const platformOptions = ['Web', 'iOS', 'Android'];
+  const featureOptions = [
+    'Photo/Video',
+    'GPS',
+    'File Transfer',
+    'Users/authentications',
+    'Biometrics',
+    'Push notifications',
+  ];
+
   const [websiteChecked, setWebsiteChecked] = useState(false);
   const [iOSChecked, setiOSChecked] = useState(false);
   const [androidChecked, setAndroidChecked] = useState(false);
@@ -68,6 +79,8 @@ const Index = () => {
   const [service, setService] = useState('');
   const [compexity, setCompexity] = useState('');
   const [users, setUsers] = useState('');
+  const [platforms, setPlatforms] = useState([]);
+  const [features, setFeatures] = useState([]);
 
   const [rows, setRows] = useState([
     createData(
@@ -282,6 +295,27 @@ const Index = () => {
                         />
                       </RadioGroup>
                     </Grid>
+                    <Grid item style={{ marginTop: '5em' }}>
+                      <Select
+                        style={{ width: '12em' }}
+                        labelId='platforms'
+                        id='platforms'
+                        displayEmpty
+                        renderValue={
+                          platforms.length > 0 ? undefined : () => 'Platforms'
+                        }
+                        multiple
+                        value={platforms}
+                        onChange={(event) => setPlatforms(event.target.value)}
+                      >
+                        {platformOptions &&
+                          platformOptions.map((option) => (
+                            <MenuItem key={option} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
@@ -349,7 +383,7 @@ const Index = () => {
                   item
                   container
                   direction='column'
-                  alignItems='flex-end'
+                  // alignItems='flex-end'
                   sm
                 >
                   <Grid item>
@@ -369,6 +403,7 @@ const Index = () => {
                     <Grid
                       item
                       container
+                      alignItems='flex-end'
                       direction='column'
                       style={{ marginTop: '5em' }}
                     >
@@ -410,6 +445,28 @@ const Index = () => {
                             control={<Radio />}
                           />
                         </RadioGroup>
+                      </Grid>
+                      <Grid item style={{ marginTop: '5em' }}>
+                        <Select
+                          labelId='features'
+                          id='features'
+                          style={{ width: '12em' }}
+                          MenuProps={{ style: { zIndex: 1302 } }}
+                          displayEmpty
+                          renderValue={
+                            features.length > 0 ? undefined : () => 'Features'
+                          }
+                          multiple
+                          value={features}
+                          onChange={(event) => setFeatures(event.target.value)}
+                        >
+                          {featureOptions &&
+                            featureOptions.map((option) => (
+                              <MenuItem key={option} value={option}>
+                                {option}
+                              </MenuItem>
+                            ))}
+                        </Select>
                       </Grid>
                     </Grid>
                   </Grid>
