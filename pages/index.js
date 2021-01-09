@@ -10,14 +10,49 @@ import Switch from '@material-ui/core/Switch';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
+import TableContainer from '@material-ui/core/TableContainer';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import TableBody from '@material-ui/core/TableBody';
+import Paper from '@material-ui/core/Paper';
+import FilterListIcon from '@material-ui/icons/FilterList';
+
 const useStyles = makeStyles((theme) => ({}));
+
+const createData = (
+  name,
+  date,
+  service,
+  features,
+  compexity,
+  platforms,
+  users,
+  total
+) => {
+  return { name, date, service, features, compexity, platforms, users, total };
+};
 
 const Index = () => {
   const classes = useStyles();
+
   const [websiteChecked, setWebsiteChecked] = useState(false);
   const [iOSChecked, setiOSChecked] = useState(false);
   const [androidChecked, setAndroidChecked] = useState(false);
   const [softwareChecked, setSofwareChecked] = useState(false);
+  const [rows, setRows] = useState([
+    createData(
+      'SerShishkov',
+      '21/01/09',
+      'Website',
+      'E-commerce',
+      'N/A',
+      'N/A',
+      'N/A',
+      '$1500'
+    ),
+  ]);
 
   return (
     <Grid container direction='column'>
@@ -31,7 +66,7 @@ const Index = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
-                <AddIcon color='primary' />
+                <AddIcon color='primary' style={{ fontSize: 30 }} />
               </InputAdornment>
             ),
           }}
@@ -90,6 +125,44 @@ const Index = () => {
             labelPlacement='start'
           />
         </FormGroup>
+      </Grid>
+      <Grid item container justify='flex-end' style={{ marginTop: '5em' }}>
+        <Grid item style={{ marginRight: 75 }}>
+          <FilterListIcon color='secondary' style={{ fontSize: 50 }} />
+        </Grid>
+      </Grid>
+      <Grid item>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Service</TableCell>
+                <TableCell>Features</TableCell>
+                <TableCell>Compexity</TableCell>
+                <TableCell>Platforms</TableCell>
+                <TableCell>Users</TableCell>
+                <TableCell>Total</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows &&
+                rows.map((row, index) => (
+                  <TableRow key={row.name}>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.date}</TableCell>
+                    <TableCell>{row.service}</TableCell>
+                    <TableCell>{row.features}</TableCell>
+                    <TableCell>{row.compexity}</TableCell>
+                    <TableCell>{row.platforms}</TableCell>
+                    <TableCell>{row.users}</TableCell>
+                    <TableCell>{row.total}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Grid>
     </Grid>
   );
