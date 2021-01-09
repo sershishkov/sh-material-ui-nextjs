@@ -3,6 +3,7 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import AddIcon from '@material-ui/icons/Add';
 
@@ -26,6 +27,7 @@ import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
+import { format } from 'date-fns';
 
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -39,6 +41,15 @@ const useStyles = makeStyles((theme) => ({
   },
   users: {
     marginRight: 0,
+  },
+  button: {
+    color: '#FFF',
+    backgroundColor: theme.palette.common.orange,
+    borderRadius: 50,
+    textTransform: 'none',
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.light,
+    },
   },
 }));
 
@@ -114,6 +125,23 @@ const Index = () => {
       '$1250'
     ),
   ]);
+
+  const addProject = () => {
+    setRows([
+      ...rows,
+      createData(
+        name,
+        format(date, 'dd/MM/yyyy'),
+        service,
+        features.join(', '),
+        compexity,
+        platforms.join(', '),
+        users,
+        total
+      ),
+    ]);
+    setDialogOpen(false);
+  };
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -471,6 +499,26 @@ const Index = () => {
                     </Grid>
                   </Grid>
                 </Grid>
+              </Grid>
+            </Grid>
+            <Grid container justify='center' style={{ marginTop: '3em' }}>
+              <Grid item>
+                <Button
+                  onClick={() => setDialogOpen(false)}
+                  color='primary'
+                  style={{ fontWeight: 300 }}
+                >
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  onClick={addProject}
+                  variant='contained'
+                  className={classes.button}
+                >
+                  Add Project +
+                </Button>
               </Grid>
             </Grid>
           </DialogContent>
