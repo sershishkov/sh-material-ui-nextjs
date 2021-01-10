@@ -61,9 +61,20 @@ const createData = (
   compexity,
   platforms,
   users,
-  total
+  total,
+  search
 ) => {
-  return { name, date, service, features, compexity, platforms, users, total };
+  return {
+    name,
+    date,
+    service,
+    features,
+    compexity,
+    platforms,
+    users,
+    total,
+    search,
+  };
 };
 
 const Index = () => {
@@ -93,6 +104,7 @@ const Index = () => {
   const [users, setUsers] = useState('');
   const [platforms, setPlatforms] = useState([]);
   const [features, setFeatures] = useState([]);
+  const [search, setSearch] = useState('');
 
   const [rows, setRows] = useState([
     createData(
@@ -103,7 +115,8 @@ const Index = () => {
       'N/A',
       'N/A',
       'N/A',
-      '$1500'
+      '$1500',
+      true
     ),
     createData(
       'Bill Gates',
@@ -113,7 +126,8 @@ const Index = () => {
       'Medium',
       'Web Application',
       '0-10',
-      '$1600'
+      '$1600',
+      true
     ),
     createData(
       'Steve Jobs',
@@ -123,7 +137,8 @@ const Index = () => {
       'Low',
       'Web Application',
       '10-100',
-      '$1250'
+      '$1250',
+      true
     ),
   ]);
 
@@ -138,7 +153,8 @@ const Index = () => {
         service === 'Website' ? 'N/A' : compexity,
         service === 'Website' ? 'N/A' : platforms.join(', '),
         service === 'Website' ? 'N/A' : users,
-        `$${total}`
+        `$${total}`,
+        true
       ),
     ]);
     setDialogOpen(false);
@@ -152,6 +168,33 @@ const Index = () => {
     setFeatures([]);
   };
 
+  const handleSearch = (event) => {
+    setSearch(event.target.value);
+    //Вернули массивы только начений
+    const rowData = rows.map((row) =>
+      Object.values(row).filter((option) => option !== true && option !== false)
+    );
+    // console.log(rowData);
+
+    // создали масиивы со значением true or false
+    //те находим ячейки где есть совпадения
+    const matches = rowData.map((row) =>
+      row.map((option) =>
+        option.toLowerCase().includes(event.target.value.toLowerCase())
+      )
+    );
+
+    const newRows = [...rows];
+    //Если есть совпадения в строке то поле search=true
+    matches.map((row, index) =>
+      row.includes(true)
+        ? (newRows[index].search = true)
+        : (newRows[index].search = false)
+    );
+    setRows(newRows);
+    // console.log(matches);
+  };
+
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Grid container direction='column'>
@@ -162,6 +205,8 @@ const Index = () => {
           <TextField
             placeholder='Search project details or create a new entry.'
             style={{ width: '35em', marginLeft: '5em' }}
+            value={search}
+            onChange={handleSearch}
             InputProps={{
               endAdornment: (
                 <InputAdornment
@@ -251,20 +296,22 @@ const Index = () => {
               </TableHead>
               <TableBody>
                 {rows &&
-                  rows.map((row, index) => (
-                    <TableRow key={index}>
-                      <TableCell align='center'>{row.name}</TableCell>
-                      <TableCell align='center'>{row.date}</TableCell>
-                      <TableCell align='center'>{row.service}</TableCell>
-                      <TableCell align='center' style={{ maxWidth: '5em' }}>
-                        {row.features}
-                      </TableCell>
-                      <TableCell align='center'>{row.compexity}</TableCell>
-                      <TableCell align='center'>{row.platforms}</TableCell>
-                      <TableCell align='center'>{row.users}</TableCell>
-                      <TableCell align='center'>{row.total}</TableCell>
-                    </TableRow>
-                  ))}
+                  rows
+                    .filter((row) => row.search)
+                    .map((row, index) => (
+                      <TableRow key={index}>
+                        <TableCell align='center'>{row.name}</TableCell>
+                        <TableCell align='center'>{row.date}</TableCell>
+                        <TableCell align='center'>{row.service}</TableCell>
+                        <TableCell align='center' style={{ maxWidth: '5em' }}>
+                          {row.features}
+                        </TableCell>
+                        <TableCell align='center'>{row.compexity}</TableCell>
+                        <TableCell align='center'>{row.platforms}</TableCell>
+                        <TableCell align='center'>{row.users}</TableCell>
+                        <TableCell align='center'>{row.total}</TableCell>
+                      </TableRow>
+                    ))}
               </TableBody>
             </Table>
           </TableContainer>
