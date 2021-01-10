@@ -141,6 +141,39 @@ const Index = () => {
       '$1250',
       true
     ),
+    createData(
+      'Steve Jobs1',
+      '21/03/09',
+      'Mobile App',
+      'Photo/Video, File Transfer, Users/Authentications',
+      'Low',
+      'iOS, Android',
+      '10-100',
+      '$1250',
+      true
+    ),
+    createData(
+      'Steve Jobs2',
+      '21/03/09',
+      'Mobile App',
+      'Photo/Video, File Transfer, Users/Authentications',
+      'Low',
+      'Android',
+      '10-100',
+      '$1250',
+      true
+    ),
+    createData(
+      'Steve Jobs3',
+      '21/03/09',
+      'Custom Software',
+      'Photo/Video, File Transfer, Users/Authentications',
+      'Low',
+      'Web Application',
+      '10-100',
+      '$1250',
+      true
+    ),
   ]);
 
   const addProject = () => {
@@ -283,6 +316,10 @@ const Index = () => {
           <EnhancedTable
             rows={rows.filter((row) => row.search)}
             setRows={setRows}
+            websiteChecked={websiteChecked}
+            iOSChecked={iOSChecked}
+            androidChecked={androidChecked}
+            softwareChecked={softwareChecked}
           />
         </Grid>
         <Dialog
