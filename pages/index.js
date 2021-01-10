@@ -276,8 +276,14 @@ const Index = () => {
           </FormGroup>
         </Grid>
 
-        <Grid item style={{ marginTop: '5em', marginBottom: '15em' }}>
-          <EnhancedTable rows={rows.filter((row) => row.search)} />
+        <Grid
+          item
+          style={{ marginTop: '5em', marginBottom: '35em', padding: '2em' }}
+        >
+          <EnhancedTable
+            rows={rows.filter((row) => row.search)}
+            setRows={setRows}
+          />
         </Grid>
         <Dialog
           fullWidth

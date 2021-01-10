@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -20,6 +20,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import Snackbar from '@material-ui/core/Snackbar';
+import Button from '@material-ui/core/Button';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -145,6 +147,37 @@ const useToolbarStyles = makeStyles((theme) => ({
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
+  const [undo, setUndo] = useState([]);
+
+  const [alert, setAlert] = useState({
+    open: false,
+    backgroundColor: '#FF3232',
+    color: '#FFF',
+    message: 'Rew Deleted',
+  });
+  const onDelete = () => {
+    // console.log(props.selected);
+    const newRows = [...props.rows];
+    // console.log(newRows);
+    const selectedRows = newRows.filter((row) =>
+      props.selected.includes(row.name)
+    );
+    // console.log(selectedRows);
+    selectedRows.map((row) => (row.search = false));
+    props.setRows(newRows);
+    setUndo(selectedRows);
+    props.setSelected([]);
+    setAlert({ ...alert, open: true });
+  };
+
+  const onUndo = () => {
+    setAlert({ ...alert, open: false });
+    const newRows = [...props.rows];
+    const redo = [...undo];
+    redo.map((row) => (row.search = true));
+    console.log([...newRows, ...redo]);
+    props.setRows([...newRows, ...redo]);
+  };
 
   return (
     <Toolbar
@@ -161,11 +194,20 @@ const EnhancedTableToolbar = (props) => {
         >
           {numSelected} выбрано
         </Typography>
-      ) : null}
+      ) : (
+        <Typography
+          className={classes.title}
+          color='inherit'
+          variant='subtitle1'
+          component='div'
+        >
+          {null}
+        </Typography>
+      )}
 
       {numSelected > 0 ? (
         <Tooltip title='Delete'>
-          <IconButton aria-label='delete'>
+          <IconButton aria-label='delete' onClick={onDelete}>
             <DeleteIcon style={{ fontSize: 30 }} color='primary' />
           </IconButton>
         </Tooltip>
@@ -176,6 +218,28 @@ const EnhancedTableToolbar = (props) => {
           </IconButton>
         </Tooltip>
       )}
+      <Snackbar
+        open={alert.open}
+        message={alert.message}
+        ContentProps={{
+          style: { backgroundColor: alert.backgroundColor, color: alert.color },
+        }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={(event, reason) => {
+          if (reason === 'clickaway') {
+            setAlert({ ...alert, open: false });
+            const newRows = [...props.rows];
+            const names = [...undo.map((row) => row.name)];
+            props.setRows(newRows.filter((row) => !names.includes(row.name)));
+          }
+        }}
+        // autoHideDuration={5000}
+        action={
+          <Button style={{ color: '#FFF' }} onClick={onUndo}>
+            Undo
+          </Button>
+        }
+      ></Snackbar>
     </Toolbar>
   );
 };
@@ -266,7 +330,13 @@ export default function EnhancedTable(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper} elevation={0}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          setRows={props.setRows}
+          rows={props.rows}
+          selected={selected}
+          setSelected={setSelected}
+          numSelected={selected.length}
+        />
         <TableContainer>
           <Table
             className={classes.table}
@@ -297,7 +367,7 @@ export default function EnhancedTable(props) {
                       role='checkbox'
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.name} //лучше если row.id
                       selected={isItemSelected}
                     >
                       <TableCell padding='checkbox'>
