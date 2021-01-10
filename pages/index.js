@@ -70,7 +70,7 @@ const Index = () => {
   const classes = useStyles();
 
   const platformOptions = ['Web', 'iOS', 'Android'];
-  const featureOptions = [
+  let featureOptions = [
     'Photo/Video',
     'GPS',
     'File Transfer',
@@ -78,6 +78,7 @@ const Index = () => {
     'Biometrics',
     'Push notifications',
   ];
+  const websiteOptions = ['Basic', 'Interactive', 'E-commercer'];
 
   const [websiteChecked, setWebsiteChecked] = useState(false);
   const [iOSChecked, setiOSChecked] = useState(false);
@@ -134,13 +135,21 @@ const Index = () => {
         format(date, 'dd/MM/yyyy'),
         service,
         features.join(', '),
-        compexity,
-        platforms.join(', '),
-        users,
-        total
+        service === 'Website' ? 'N/A' : compexity,
+        service === 'Website' ? 'N/A' : platforms.join(', '),
+        service === 'Website' ? 'N/A' : users,
+        `$${total}`
       ),
     ]);
     setDialogOpen(false);
+    setName('');
+    setDate(new Date());
+    setTotal('');
+    setService('');
+    setCompexity('');
+    setUsers('');
+    setPlatforms([]);
+    setFeatures([]);
   };
 
   return (
@@ -301,7 +310,9 @@ const Index = () => {
                         aria-label='service'
                         name='service'
                         value={service}
-                        onChange={(event) => setService(event.target.value)}
+                        onChange={(event) => {
+                          setService(event.target.value), setFeatures([]);
+                        }}
                       >
                         <FormControlLabel
                           classes={{ label: classes.service }}
@@ -328,6 +339,7 @@ const Index = () => {
                         style={{ width: '12em' }}
                         labelId='platforms'
                         id='platforms'
+                        disabled={service === 'Website'}
                         displayEmpty
                         renderValue={
                           platforms.length > 0 ? undefined : () => 'Platforms'
@@ -383,18 +395,21 @@ const Index = () => {
                           onChange={(event) => setCompexity(event.target.value)}
                         >
                           <FormControlLabel
+                            disabled={service === 'Website'}
                             classes={{ label: classes.service }}
                             value='Low'
                             label='Low'
                             control={<Radio />}
                           />
                           <FormControlLabel
+                            disabled={service === 'Website'}
                             classes={{ label: classes.service }}
                             value='Medium'
                             label='Medium'
                             control={<Radio />}
                           />
                           <FormControlLabel
+                            disabled={service === 'Website'}
                             classes={{ label: classes.service }}
                             value='High'
                             label='High'
@@ -446,6 +461,7 @@ const Index = () => {
                           onChange={(event) => setUsers(event.target.value)}
                         >
                           <FormControlLabel
+                            disabled={service === 'Website'}
                             classes={{
                               label: classes.service,
                               root: classes.users,
@@ -455,6 +471,7 @@ const Index = () => {
                             control={<Radio />}
                           />
                           <FormControlLabel
+                            disabled={service === 'Website'}
                             classes={{
                               label: classes.service,
                               root: classes.users,
@@ -464,6 +481,7 @@ const Index = () => {
                             control={<Radio />}
                           />
                           <FormControlLabel
+                            disabled={service === 'Website'}
                             classes={{
                               label: classes.service,
                               root: classes.users,
@@ -488,6 +506,9 @@ const Index = () => {
                           value={features}
                           onChange={(event) => setFeatures(event.target.value)}
                         >
+                          {service === 'Website'
+                            ? (featureOptions = websiteOptions)
+                            : null}
                           {featureOptions &&
                             featureOptions.map((option) => (
                               <MenuItem key={option} value={option}>
@@ -516,6 +537,20 @@ const Index = () => {
                   onClick={addProject}
                   variant='contained'
                   className={classes.button}
+                  disabled={
+                    service === 'Website'
+                      ? name.length === 0 ||
+                        total.length === 0 ||
+                        features.length === 0 ||
+                        features.length > 1
+                      : name.length === 0 ||
+                        total.length === 0 ||
+                        features.length === 0 ||
+                        users.length === 0 ||
+                        compexity.length === 0 ||
+                        platforms.length === 0 ||
+                        service.length === 0
+                  }
                 >
                   Add Project +
                 </Button>
