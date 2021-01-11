@@ -22,6 +22,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Snackbar from '@material-ui/core/Snackbar';
 import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -142,12 +146,23 @@ const useToolbarStyles = makeStyles((theme) => ({
   title: {
     flex: '1 1 100%',
   },
+  menu: {
+    '&:hover': {
+      backgroundColor: '#FFF',
+    },
+    '&:Mui-focusVisible': {
+      backgroundColor: '#FFF',
+    },
+  },
 }));
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
   const [undo, setUndo] = useState([]);
+  const [anchorEl, setAncorEl] = useState(null);
+  const [openMenu, setOpenMenu] = useState(false);
+  const [totalFilter, setTotalFilter] = useState('>');
 
   const [alert, setAlert] = useState({
     open: false,
@@ -177,6 +192,15 @@ const EnhancedTableToolbar = (props) => {
     redo.map((row) => (row.search = true));
     console.log([...newRows, ...redo]);
     props.setRows([...newRows, ...redo]);
+  };
+  const handleClick = (e) => {
+    setAncorEl(e.currentTarget);
+    setOpenMenu(true);
+  };
+
+  const handleClose = (e) => {
+    setAncorEl(null);
+    setOpenMenu(false);
   };
 
   return (
@@ -213,7 +237,7 @@ const EnhancedTableToolbar = (props) => {
         </Tooltip>
       ) : (
         <Tooltip title='Filter list'>
-          <IconButton aria-label='filter list'>
+          <IconButton aria-label='filter list' onClick={handleClick}>
             <FilterListIcon style={{ fontSize: 50 }} color='secondary' />
           </IconButton>
         </Tooltip>
@@ -240,6 +264,40 @@ const EnhancedTableToolbar = (props) => {
           </Button>
         }
       ></Snackbar>
+      <Menu
+        id='sh-menu-for-services'
+        anchorEl={anchorEl}
+        open={openMenu}
+        onClose={handleClose}
+        // MenuListProps={{ onMouseLeave: handleClose }}
+        // classes={{ paper: classes.menu }}
+        elevation={0}
+        style={{ zIndex: 1302 }}
+        keepMounted
+      >
+        <MenuItem classes={{ root: classes.menu }}>
+          <TextField
+            InputProps={{
+              type: 'number',
+              endAdornment: (
+                <InputAdornment
+                  onClick={() => {
+                    totalFilter === '>'
+                      ? setTotalFilter('<')
+                      : totalFilter === '<'
+                      ? setTotalFilter('=')
+                      : setTotalFilter('>');
+                  }}
+                  position='end'
+                  style={{ pointer: 'click' }}
+                >
+                  <span className={classes.totalFilter}>{totalFilter}</span>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </MenuItem>
+      </Menu>
     </Toolbar>
   );
 };
